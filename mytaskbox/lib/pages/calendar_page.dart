@@ -30,6 +30,10 @@ class _CalendarPageState extends State<CalendarPage> {
         Container(
           margin: EdgeInsets.only(left: 20, right: 20),
           child: TableCalendar(
+            eventLoader: (day) {
+              return _getEventsForDay(day);
+            },
+            startingDayOfWeek: StartingDayOfWeek.sunday,
             focusedDay: _focusedDay,
             calendarFormat: CalendarFormat.month,
             firstDay: DateTime.utc(2020, 1, 1),
@@ -42,6 +46,9 @@ class _CalendarPageState extends State<CalendarPage> {
               });
             },
             calendarStyle: CalendarStyle(
+              defaultTextStyle: TextStyle(
+                fontSize: 17
+              ),
               todayDecoration: BoxDecoration(
                 color: Colors.blueAccent,
                 shape: BoxShape.circle,
@@ -66,7 +73,16 @@ class _CalendarPageState extends State<CalendarPage> {
           child: Container(
             margin: EdgeInsets.only(left: 10, right: 10, top: 20),
             child: selectedEvents.isEmpty
-                ? Center(child: Text("No events for this day"))
+                ? Center(
+                    child: Text(
+                      "No events for this day",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  )
                 : ListView.builder(
                     itemCount: selectedEvents.length,
                     itemBuilder: (context, index) {
@@ -80,13 +96,19 @@ class _CalendarPageState extends State<CalendarPage> {
                               color: Colors.black38,
                               blurStyle: BlurStyle.normal,
                               blurRadius: 4,
-                              offset: Offset(0, 3)
-                            )
-                          ]
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
                         child: ListTile(
-                          leading: Text("${index + 9}:00 AM", style: TextStyle(fontSize: 16),),
-                          title: Text(selectedEvents[index], style: TextStyle(fontSize: 18),),
+                          leading: Text(
+                            "${index + 9}:00 AM",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          title: Text(
+                            selectedEvents[index],
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ),
                       );
                     },

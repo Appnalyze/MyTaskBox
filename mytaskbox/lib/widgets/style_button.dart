@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mytaskbox/color/colors_const.dart';
 
 class StyleButton extends StatefulWidget {
   const StyleButton({super.key});
@@ -15,14 +14,14 @@ class _StyleButtonState extends State<StyleButton> {
       child: Container(
         width: 350,
         decoration: BoxDecoration(
-          color: iconFocus,
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.blueAccent.shade200,
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               spreadRadius: 1,
-              color: Colors.black26,
+              color: Colors.black38,
               offset: Offset(0, 3),
-              blurRadius: 5,
+              blurRadius: 4,
               blurStyle: BlurStyle.normal
             )
           ]
