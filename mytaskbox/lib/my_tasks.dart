@@ -16,7 +16,7 @@ class MyTasks extends StatefulWidget {
 }
 
 class _MyTasksState extends State<MyTasks> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   final List<Widget> _screens = [
     Homepage(),
@@ -41,7 +41,7 @@ class _MyTasksState extends State<MyTasks> {
               if (states.contains(WidgetState.selected)) {
                 return TextStyle(color: iconFocus);
               }
-              return TextStyle(color: iconColor);
+              return TextStyle(color: const Color.fromARGB(255, 87, 87, 87));
             }),
             elevation: 0.0,
             selectedIndex: _selectedIndex,
@@ -58,7 +58,7 @@ class _MyTasksState extends State<MyTasks> {
               ),
               NavigationDestination(
                 selectedIcon: Icon(Icons.calendar_month, color: iconFocus),
-                icon: Icon(Icons.calendar_month, color: iconColor),
+                icon: Icon(Icons.calendar_month),
                 label: "Calendar",
               ),
               NavigationDestination(
