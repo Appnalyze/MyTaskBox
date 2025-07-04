@@ -13,10 +13,10 @@ class _HomepageState extends State<Homepage> {
     return Column(
       children: [
         SizedBox(height: 8),
-        Container(height: 162, width: 300, color: Colors.white),
+        Container(height: 162, width: 300, color: Colors.blue),
         SizedBox(height: 15),
 
-        Container(height: 85, width: 300, color: Colors.white),
+        Container(height: 85, width: 300, color: Colors.blue),
         SizedBox(height: 15),
         Expanded(
           child: SingleChildScrollView(

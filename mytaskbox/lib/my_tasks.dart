@@ -30,12 +30,12 @@ class _MyTasksState extends State<MyTasks> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: backGroundColor,
+      backgroundColor: Colors.white,
       bottomNavigationBar: ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: NavigationBar(
-            backgroundColor: Colors.white,
+            backgroundColor: backGroundColor,
             surfaceTintColor: Colors.transparent,
             labelTextStyle: WidgetStateTextStyle.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mytaskbox/color/colors_const.dart';
 import 'package:mytaskbox/widgets/category_list.dart';
+import 'package:mytaskbox/widgets/deadline_date.dart';
 import 'package:mytaskbox/widgets/descriptioen_field.dart';
 import 'package:mytaskbox/widgets/priority_list.dart';
+import 'package:mytaskbox/widgets/style_button.dart';
 import 'package:mytaskbox/widgets/title_field.dart';
 
 class AddTaskPage extends StatelessWidget {
@@ -18,36 +19,10 @@ class AddTaskPage extends StatelessWidget {
           TitleField(),
           DescriptioenField(),
           CategoryList(),
-          Container(
-            height: 75,
-            margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-            child: Text(
-              "Deadline",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 23,
-              ),
-            ),
-          ),
+          DeadlineDate(),
           PriorityList(),
           SizedBox(height: 40),
-          Center(
-            child: Container(
-              width: 350,
-              decoration: BoxDecoration(
-                color: iconFocus,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: TextButton(
-                onPressed: () {},
-                child: Text(
-                  "Save Task",
-                  style: TextStyle(color: Colors.white, fontSize: 25),
-                ),
-              ),
-            ),
-          ),
+          StyleButton()
         ],
       ),
     );
