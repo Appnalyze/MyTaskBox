@@ -36,7 +36,6 @@ class _CategoryListState extends State<CategoryList> {
               fontSize: 23,
             ),
           ),
-
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -12,15 +14,80 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  final Map<DateTime, List<String>> events = {
-    DateTime.utc(2025, 7, 4): ['🎉 Independence Day Event', '🏃 Morning Run', 'Hola', 'Dia'],
-    DateTime.utc(2025, 7, 5): ['🛍️ Shopping at 10AM', '📞 Call Mom'],
-  };
+  Map<DateTime, List<Map<String, dynamic>>> _events = {};
 
-  List<String> _getEventsForDay(DateTime day) {
-    return events[DateTime.utc(day.year, day.month, day.day)] ?? [];
+  @override
+  void initState() {
+    super.initState();
+    _loadTasksFromSupabase();
   }
 
+  bool isLoading = false;
+
+  // ⬇ Fetch from Supabase and build the events map
+  Future<void> _loadTasksFromSupabase() async {
+    setState(() => isLoading = true);
+    final response = await Supabase.instance.client
+        .from('task')
+        .select('id, title, deadline');
+    if (response.isEmpty) return;
+    final Map<DateTime, List<Map<String, dynamic>>> loadedEvents = {};
+    for (var task in response) {
+      final id = task['id'];
+      final deadlineString = task['deadline'];
+      final title = task['title'];
+      if (deadlineString != null && title != null) {
+        final deadline = DateTime.parse(deadlineString);
+        final dayKey = DateTime.utc(
+          deadline.year,
+          deadline.month,
+          deadline.day,
+        );
+        final event = {'id': id, 'title': title, 'time': deadline};
+        if (loadedEvents.containsKey(dayKey)) {
+          loadedEvents[dayKey]!.add(event);
+        } else {
+          loadedEvents[dayKey] = [event];
+        }
+      }
+    }
+    setState(() {
+      _events = loadedEvents;
+      isLoading = false;
+    });
+  }
+
+  Future<bool> _confirmDelete(BuildContext context) async {
+    return await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Delete Task'),
+            content: const Text('Are you sure you want to delete this task?'),
+            actions: [
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(ctx).pop(false),
+              ),
+              TextButton(
+                child: const Text('Delete'),
+                onPressed: () => Navigator.of(ctx).pop(true),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future<void> _deleteTask(int id) async {
+    await Supabase.instance.client.from('task').delete().eq('id', id);
+
+    _loadTasksFromSupabase(); // Refresh UI
+  }
+
+  List<Map<String, dynamic>> _getEventsForDay(DateTime day) {
+    final key = DateTime.utc(day.year, day.month, day.day);
+    return _events[key] ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +96,9 @@ class _CalendarPageState extends State<CalendarPage> {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.only(left: 20, right: 20),
+          margin: const EdgeInsets.symmetric(horizontal: 20),
           child: TableCalendar(
-            eventLoader: (day) {
-              return _getEventsForDay(day);
-            },
+            eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.sunday,
             focusedDay: _focusedDay,
             calendarFormat: CalendarFormat.month,
@@ -46,10 +111,8 @@ class _CalendarPageState extends State<CalendarPage> {
                 _focusedDay = focusedDay;
               });
             },
-            calendarStyle: CalendarStyle(
-              defaultTextStyle: TextStyle(
-                fontSize: 17
-              ),
+            calendarStyle: const CalendarStyle(
+              defaultTextStyle: TextStyle(fontSize: 17),
               todayDecoration: BoxDecoration(
                 color: Colors.blueAccent,
                 shape: BoxShape.circle,
@@ -59,7 +122,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 shape: BoxShape.circle,
               ),
             ),
-            headerStyle: HeaderStyle(
+            headerStyle: const HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
               titleTextStyle: TextStyle(
@@ -70,48 +133,81 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: Text(
+            DateFormat('EEEE, MMMM d, y').format(_selectedDay ?? _focusedDay),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          "${_getEventsForDay(_selectedDay ?? _focusedDay).length} ${_getEventsForDay(_selectedDay ?? _focusedDay).length == 1 ? 'task' : 'tasks'}",
+          style: const TextStyle(fontSize: 16, color: Colors.grey),
+        ),
         Expanded(
           child: Container(
-            margin: EdgeInsets.only(left: 10, right: 10, top: 20),
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             child: selectedEvents.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text(
                       "No events for this day",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 20),
                     ),
                   )
                 : ListView.builder(
-                    
                     itemCount: selectedEvents.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 15),
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black38,
-                              blurStyle: BlurStyle.normal,
-                              blurRadius: 4,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
+                      final event = selectedEvents[index];
+                      final timeFormatted = DateFormat(
+                        'h:mm a',
+                      ).format(event['time']);
+
+                      return Dismissible(
+                        key: ValueKey(event['id'] ?? UniqueKey()),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          padding: const EdgeInsets.only(right: 20),
+                          alignment: Alignment.centerRight,
+                          color: Colors.red,
+                          child: const Icon(Icons.delete, color: Colors.white),
                         ),
-                        child: ListTile(
+                        confirmDismiss: (_) => _confirmDelete(context),
+                        onDismissed: (_) async {
+                          final id = event['id'];
+                          setState(() {
+                            selectedEvents.removeAt(index);
+                          });
+                          await _deleteTask(id);
+                          },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 15),
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black38,
+                                blurRadius: 4,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                             leading: Text(
-                              "${index + 9}:00 AM",
-                              style: TextStyle(fontSize: 16),
+                              timeFormatted,
+                              style: const TextStyle(fontSize: 16),
                             ),
                             title: Text(
-                              selectedEvents[index],
-                              style: TextStyle(fontSize: 18),
+                              event['title'],
+                              style: const TextStyle(fontSize: 18),
                             ),
                           ),
-                        
+                        ),
                       );
                     },
                   ),

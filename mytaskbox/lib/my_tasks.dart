@@ -26,8 +26,8 @@ class _MyTasksState extends State<MyTasks> {
     ProfilePage(), 
   ];
 
-  void _openAddExpenseOverlay() {
-    showModalBottomSheet(
+  void _openAddExpenseOverlay() async {
+    await showModalBottomSheet(
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
