@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 class DescriptioenField extends StatefulWidget {
-  const DescriptioenField({super.key});
+  const DescriptioenField({super.key, required this.controller});
+
+  final TextEditingController controller;
 
   @override
   State<DescriptioenField> createState() => _DescriptioenFieldState();
 }
 
 class _DescriptioenFieldState extends State<DescriptioenField> {
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,9 +29,10 @@ class _DescriptioenFieldState extends State<DescriptioenField> {
           ),
           SizedBox(height: 8,),
           TextField(
+            controller: widget.controller,
             maxLength: 150,
             maxLines: 4,
-            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               alignLabelWithHint: true,
               label: Text(

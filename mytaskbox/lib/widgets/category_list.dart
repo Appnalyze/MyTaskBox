@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mytaskbox/color/colors_const.dart';
 
 class CategoryList extends StatefulWidget {
-  const CategoryList({super.key});
+  const CategoryList({super.key, required this.onCategorySelected});
+  final void Function(String selectedCategory)? onCategorySelected;
 
   @override
   State<CategoryList> createState() => _CategoryListState();
@@ -51,6 +52,9 @@ class _CategoryListState extends State<CategoryList> {
                         setState(() {
                           _isSelectedCategory = index;
                         });
+                        if (widget.onCategorySelected != null) {
+                          widget.onCategorySelected!(category['name']);
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(

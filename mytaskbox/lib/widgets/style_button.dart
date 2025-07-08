@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-class StyleButton extends StatefulWidget {
-  const StyleButton({super.key});
+class StyleButton extends StatelessWidget {
+  const StyleButton({super.key, required this.onPressed, this.label = 'Save Task'});
 
-  @override
-  State<StyleButton> createState() => _StyleButtonState();
-}
+  final Future<void> Function() onPressed;
+  final String label;
 
-class _StyleButtonState extends State<StyleButton> {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -27,9 +25,11 @@ class _StyleButtonState extends State<StyleButton> {
           ]
         ),
         child: TextButton(
-          onPressed: () {},
+          onPressed: () async {
+            await onPressed();
+          },
           child: Text(
-            "Save Task",
+            label,
             style: TextStyle(color: Colors.white, fontSize: 25),
           ),
         ),

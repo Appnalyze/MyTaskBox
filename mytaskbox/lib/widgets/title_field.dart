@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 
 class TitleField extends StatefulWidget {
-  const TitleField({super.key});
+  const TitleField({super.key, required this.controller});
+
+  final TextEditingController controller;
 
   @override
   State<TitleField> createState() => _TitleFieldState();
+
+
 }
 
 class _TitleFieldState extends State<TitleField> {
+  
+  TextEditingController titleController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,17 +22,29 @@ class _TitleFieldState extends State<TitleField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Title",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 23,
-            ),
+          Row(
+            children: [
+              Text(
+                "Title",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 23,
+                ),
+              ),
+              Spacer(),
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.close, size: 25, color: Colors.black),
+              ),
+            ],
           ),
-          SizedBox(height: 8,),
+          SizedBox(height: 8),
           TextField(
             onTapOutside: (event) => FocusScope.of(context).unfocus(),
+            controller: widget.controller,
             decoration: InputDecoration(
               label: Text(
                 'Enter Title',

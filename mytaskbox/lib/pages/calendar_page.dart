@@ -13,13 +13,14 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime? _selectedDay;
 
   final Map<DateTime, List<String>> events = {
-    DateTime.utc(2025, 7, 4): ['🎉 Independence Day Event', '🏃 Morning Run'],
+    DateTime.utc(2025, 7, 4): ['🎉 Independence Day Event', '🏃 Morning Run', 'Hola', 'Dia'],
     DateTime.utc(2025, 7, 5): ['🛍️ Shopping at 10AM', '📞 Call Mom'],
   };
 
   List<String> _getEventsForDay(DateTime day) {
     return events[DateTime.utc(day.year, day.month, day.day)] ?? [];
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +79,12 @@ class _CalendarPageState extends State<CalendarPage> {
                       "No events for this day",
                       style: TextStyle(
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
                     ),
                   )
                 : ListView.builder(
+                    
                     itemCount: selectedEvents.length,
                     itemBuilder: (context, index) {
                       return Container(
@@ -101,15 +102,16 @@ class _CalendarPageState extends State<CalendarPage> {
                           ],
                         ),
                         child: ListTile(
-                          leading: Text(
-                            "${index + 9}:00 AM",
-                            style: TextStyle(fontSize: 16),
+                            leading: Text(
+                              "${index + 9}:00 AM",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            title: Text(
+                              selectedEvents[index],
+                              style: TextStyle(fontSize: 18),
+                            ),
                           ),
-                          title: Text(
-                            selectedEvents[index],
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
+                        
                       );
                     },
                   ),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PriorityList extends StatefulWidget {
-  const PriorityList({super.key});
+  const PriorityList({super.key, this.onPrioritySelected});
+
+  
+  final void Function(String selectedPriority)? onPrioritySelected;
 
   @override
   State<PriorityList> createState() => _PriorityListState();
@@ -42,10 +45,14 @@ class _PriorityListState extends State<PriorityList> {
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: GestureDetector(
+                  
                   onTap: () {
                     setState(() {
                       _isSelectedPriority = index;
                     });
+                    if (widget.onPrioritySelected != null){
+                      widget.onPrioritySelected!(priority['name']);
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

@@ -18,13 +18,22 @@ class MyTasks extends StatefulWidget {
 class _MyTasksState extends State<MyTasks> {
   int _selectedIndex = 1;
 
-  final List<Widget> _screens = [
+  final List _screens = [
     Homepage(),
     CalendarPage(),
-    AddTaskPage(),
+    Container(),
     DashboardPage(),
-    ProfilePage(), // <- Tapped avatar goes here
+    ProfilePage(), 
   ];
+
+  void _openAddExpenseOverlay() {
+    showModalBottomSheet(
+      useSafeArea: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) => AddTaskPage(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +55,13 @@ class _MyTasksState extends State<MyTasks> {
             elevation: 0.0,
             selectedIndex: _selectedIndex,
             onDestinationSelected: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
+              if (index == 2) {
+                _openAddExpenseOverlay();
+              } else {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              }
             },
             destinations: [
               NavigationDestination(
@@ -62,7 +75,10 @@ class _MyTasksState extends State<MyTasks> {
                 label: "Calendar",
               ),
               NavigationDestination(
-                selectedIcon: Icon(CupertinoIcons.add_circled_solid, color: iconFocus,),
+                selectedIcon: Icon(
+                  CupertinoIcons.add_circled_solid,
+                  color: iconFocus,
+                ),
                 icon: Icon(CupertinoIcons.add_circled_solid),
                 label: "Add",
               ),
