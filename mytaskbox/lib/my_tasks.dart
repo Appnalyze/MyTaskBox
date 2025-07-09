@@ -12,27 +12,36 @@ class MyTasks extends StatefulWidget {
   const MyTasks({super.key});
 
   @override
+  
   State<MyTasks> createState() => _MyTasksState();
+  
 }
 
 class _MyTasksState extends State<MyTasks> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
-  final List _screens = [
+  
+  final GlobalKey<CalendarPageState> _calendarKey = GlobalKey<CalendarPageState>();
+
+  late final List _screens = [
     Homepage(),
-    CalendarPage(),
+    CalendarPage(key: _calendarKey,),
     Container(),
     DashboardPage(),
     ProfilePage(), 
   ];
+  
 
   void _openAddExpenseOverlay() async {
     await showModalBottomSheet(
+      backgroundColor: Colors.white,
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
       builder: (ctx) => AddTaskPage(),
     );
+
+    _calendarKey.currentState?.refreshTasks(); 
   }
 
   @override

@@ -7,30 +7,36 @@ class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
 
   @override
-  State<CalendarPage> createState() => _CalendarPageState();
+  State<CalendarPage> createState() => CalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  Map<DateTime, List<Map<String, dynamic>>> _events = {};
-
-  @override
-  void initState() {
-    super.initState();
+  void refreshTasks() {
     _loadTasksFromSupabase();
   }
+
+  Map<DateTime, List<Map<String, dynamic>>> _events = {};
 
   bool isLoading = false;
 
   // ⬇ Fetch from Supabase and build the events map
   Future<void> _loadTasksFromSupabase() async {
     setState(() => isLoading = true);
+
     final response = await Supabase.instance.client
         .from('task')
-        .select('id, title, deadline');
-    if (response.isEmpty) return;
+        .select('id, title, deadline').eq('done', false);
+
+    if (!mounted) return; // <- Fix added
+
+    if (response.isEmpty) {
+      setState(() => isLoading = false);
+      return;
+    }
+
     final Map<DateTime, List<Map<String, dynamic>>> loadedEvents = {};
     for (var task in response) {
       final id = task['id'];
@@ -44,13 +50,12 @@ class _CalendarPageState extends State<CalendarPage> {
           deadline.day,
         );
         final event = {'id': id, 'title': title, 'time': deadline};
-        if (loadedEvents.containsKey(dayKey)) {
-          loadedEvents[dayKey]!.add(event);
-        } else {
-          loadedEvents[dayKey] = [event];
-        }
+        loadedEvents.putIfAbsent(dayKey, () => []).add(event);
       }
     }
+
+    if (!mounted) return; // <- another safety check
+
     setState(() {
       _events = loadedEvents;
       isLoading = false;
@@ -80,13 +85,19 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Future<void> _deleteTask(int id) async {
     await Supabase.instance.client.from('task').delete().eq('id', id);
-
+    if (!mounted) return;
     _loadTasksFromSupabase(); // Refresh UI
   }
 
   List<Map<String, dynamic>> _getEventsForDay(DateTime day) {
     final key = DateTime.utc(day.year, day.month, day.day);
     return _events[key] ?? [];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasksFromSupabase();
   }
 
   @override
@@ -173,7 +184,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         background: Container(
                           padding: const EdgeInsets.only(right: 20),
                           alignment: Alignment.centerRight,
-                          color: Colors.red,
+                          color: Colors.red.shade300,
                           child: const Icon(Icons.delete, color: Colors.white),
                         ),
                         confirmDismiss: (_) => _confirmDelete(context),
@@ -183,11 +194,11 @@ class _CalendarPageState extends State<CalendarPage> {
                             selectedEvents.removeAt(index);
                           });
                           await _deleteTask(id);
-                          },
+                        },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 15),
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent.shade100,
+                            color: Colors.blueAccent.shade200,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: const [
                               BoxShadow(
@@ -200,12 +211,13 @@ class _CalendarPageState extends State<CalendarPage> {
                           child: ListTile(
                             leading: Text(
                               timeFormatted,
-                              style: const TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16, color: Colors.white),
                             ),
                             title: Text(
                               event['title'],
-                              style: const TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                             ),
+                            
                           ),
                         ),
                       );

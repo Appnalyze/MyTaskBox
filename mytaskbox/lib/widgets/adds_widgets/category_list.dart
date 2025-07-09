@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mytaskbox/color/colors_const.dart';
 
-class CategoryList extends StatefulWidget {
-  const CategoryList({super.key, required this.onCategorySelected});
-  final void Function(String selectedCategory)? onCategorySelected;
-
-  @override
-  State<CategoryList> createState() => _CategoryListState();
-}
-
 final List<Map<String, dynamic>> categories = [
   {'name': 'Work', 'icon': Icons.work},
   {'name': 'School', 'icon': Icons.school},
@@ -17,18 +9,47 @@ final List<Map<String, dynamic>> categories = [
   {'name': 'Home', 'icon': Icons.home_filled},
 ];
 
-int? _isSelectedCategory;
+class CategoryList extends StatefulWidget {
+  const CategoryList({
+    super.key,
+    required this.onCategorySelected,
+    this.selectedCategory,
+  });
+
+  final void Function(String selectedCategory)? onCategorySelected;
+  final String? selectedCategory;
+
+  static List<String> get allCategoryNames =>
+      categories.map((c) => c['name'] as String).toList();
+
+  @override
+  State<CategoryList> createState() => _CategoryListState();
+}
 
 class _CategoryListState extends State<CategoryList> {
+  int? _isSelectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialIndex = categories.indexWhere(
+      (cat) => cat['name'].toString().toLowerCase() ==
+          widget.selectedCategory?.toLowerCase(),
+    );
+    if (initialIndex != -1) {
+      _isSelectedCategory = initialIndex;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 75,
-      margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Category",
             style: TextStyle(
               color: Colors.black,
@@ -45,7 +66,7 @@ class _CategoryListState extends State<CategoryList> {
                   final isSelected = _isSelectedCategory == index;
 
                   return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -68,7 +89,6 @@ class _CategoryListState extends State<CategoryList> {
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               category['icon'],

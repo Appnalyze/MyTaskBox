@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DeadlineDate extends StatefulWidget {
-  const DeadlineDate({super.key, required this.onDateSelected});
+  const DeadlineDate({
+    super.key,
+    required this.onDateSelected,
+    this.initialDate,
+  });
 
   final void Function(DateTime deadline)? onDateSelected;
+  final DateTime? initialDate;
 
   @override
   State<DeadlineDate> createState() => _DeadlineDateState();
@@ -13,10 +18,15 @@ class DeadlineDate extends StatefulWidget {
 class _DeadlineDateState extends State<DeadlineDate> {
   DateTime? _selectedDateTime;
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedDateTime = widget.initialDate;
+  }
+
   Future<void> _pickDateTime() async {
     final now = DateTime.now();
 
-    // Step 1: Pick Date
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDateTime ?? now,
@@ -26,7 +36,6 @@ class _DeadlineDateState extends State<DeadlineDate> {
 
     if (pickedDate == null) return;
 
-    // Step 2: Pick Time
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(_selectedDateTime ?? now),
@@ -34,7 +43,6 @@ class _DeadlineDateState extends State<DeadlineDate> {
 
     if (pickedTime == null) return;
 
-    // Combine Date + Time
     final DateTime fullDateTime = DateTime(
       pickedDate.year,
       pickedDate.month,
@@ -56,11 +64,11 @@ class _DeadlineDateState extends State<DeadlineDate> {
   Widget build(BuildContext context) {
     return Container(
       height: 75,
-      margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Deadline",
             style: TextStyle(
               color: Colors.black,
@@ -78,14 +86,14 @@ class _DeadlineDateState extends State<DeadlineDate> {
                 children: [
                   IconButton(
                     onPressed: _pickDateTime,
-                    icon: Icon(Icons.calendar_month),
+                    icon: const Icon(Icons.calendar_month),
                   ),
                   Text(
                     _selectedDateTime != null
-                        ? DateFormat('yyyy-MM-dd').format(_selectedDateTime!)
+                        ? DateFormat('yyyy-MM-dd – kk:mm').format(_selectedDateTime!)
                         : "No selected date!",
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 122, 122, 122),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 122, 122, 122),
                     ),
                   ),
                 ],
