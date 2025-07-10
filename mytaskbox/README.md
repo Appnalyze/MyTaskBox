@@ -1,16 +1,38 @@
-# mytaskbox
+# 📦 MyTaskBox
 
-A new Flutter project.
+**MyTaskBox** is a sleek, real-time task management mobile app built with **Flutter** and powered by **Supabase**. It helps users organize their to-dos by categories, priority, and deadline — all with a user-friendly UI and seamless experience.
 
-## Getting Started
+## 🚀 Features
 
-This project is a starting point for a Flutter application.
+- ✅ **Mark Tasks as Done**  
+  Tap to complete tasks and toggle them back if needed.
 
-A few resources to get you started if this is your first Flutter project:
+- ✏️ **Edit / Delete Tasks**  
+  Modify or remove tasks with confirmation dialogs to prevent accidental deletion.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 🗂️ **Category & Priority Selection**  
+  Classify tasks with custom categories and one-select priority chips.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 📅 **Calendar View**  
+  Visualize deadlines on a calendar using `table_calendar`.
+
+- 📊 **Sort Tasks**  
+  Sort by priority or deadline for better focus.
+
+- 🔥 **Real-Time Sync with Supabase**  
+  Uses `.stream()` for live updates on task changes.
+
+## 🛠️ Built With
+
+- **Flutter** – Cross-platform UI toolkit
+- **Supabase** – Open-source backend (PostgreSQL, Realtime, Auth)
+- **Dart** – Programming language for Flutter
+- **table_calendar** – Beautiful customizable calendar widget
+
+## 📸 Screenshots
+
+> _Coming soon_ — UI previews of the homepage, calendar view, and task creation screen.
+
+## 📄 License
+
+MIT License. Feel free to fork, clone, and build upon it.
