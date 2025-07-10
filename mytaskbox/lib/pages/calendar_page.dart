@@ -28,7 +28,8 @@ class CalendarPageState extends State<CalendarPage> {
 
     final response = await Supabase.instance.client
         .from('task')
-        .select('id, title, deadline').eq('done', false);
+        .select('id, title, deadline')
+        .eq('done', false);
 
     if (!mounted) return; // <- Fix added
 
@@ -211,13 +212,18 @@ class CalendarPageState extends State<CalendarPage> {
                           child: ListTile(
                             leading: Text(
                               timeFormatted,
-                              style: const TextStyle(fontSize: 16, color: Colors.white),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
                             ),
                             title: Text(
                               event['title'],
-                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            
                           ),
                         ),
                       );

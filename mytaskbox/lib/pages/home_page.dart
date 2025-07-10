@@ -107,7 +107,7 @@ class _HomepageState extends State<Homepage> {
               }
               final liveTasks = snapshot.data!;
               return liveTasks.isEmpty
-                  ? const Center(child: Text("No tasks found."))
+                  ? const Center(child: Text("No tasks found.", style: TextStyle(color: Colors.black, fontSize: 20),))
                   : ListView.builder(
                       itemCount: liveTasks.length,
                       itemBuilder: (context, index) {
