@@ -1,6 +1,6 @@
-# mytaskbox
+# MyTaskBox
 
-A new Flutter project.
+A new App project of Appnalyze LLC 
 
 ## Getting Started
 
